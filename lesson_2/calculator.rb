@@ -45,8 +45,12 @@ def calculate()
       puts "one or both of your numbers weren't valid"
       next
     end
-
-    break
+    puts "care to go again? Y/N"
+    recalculate = gets.chomp
+    if recaltulate.upcase = 'Y'
+      next
+    else
+      break
   end
 end
       
