@@ -91,8 +91,8 @@ def play_again
 end
 
 loop do
-  num1 = get_number()
-  num2 = get_number()
+  num1 = get_number
+  num2 = get_number
   operation = get_operation
   result, operator = result_and_operator(operation, num1, num2)
   dramatic_pause
