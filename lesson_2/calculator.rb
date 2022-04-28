@@ -29,7 +29,7 @@ def messages(text, language = 'en')
   MESSAGES[language][text]
 end
 
-# Asks for input number
+# Asks user for number
 def get_number
   loop do
     prompt('get_number')
@@ -47,66 +47,59 @@ def get_number
   end
 end
 
+# asks user for valid operation
 def get_operation
-  loop do
+  operation = ''
+  until %w(1 2 3 4).include?(operation) do
+    prompt ('invalid_operation') unless operation.empty?
     prompt('operation')
     operation = gets.chomp
-
-    if %w(1 2 3 4).include?(operation)
-      return operation
-    else
-      prompt('invalid_operation')
-    end
   end
+  operation
 end
 
-def get_result(operation, num1, num2)
+# returns an array with result of peration at index 0 and operator used at index 1
+def result_and_operator(operation, num1, num2)
   case operation
-    when '1'
-      result, operator = [num1 + num2, '+']
-    when '2'
-      result, operator = [num1 - num2, '-']
-    when '3'
-      result, operator = [num1 * num2, 'x']
-    when '4'
-      result, operator = [(num1.to_f / num2).round(2), '/']
-    else
-      get_result(operation,num1,num2)
+  when '1'
+    [num1 + num2, '+']
+  when '2'
+    [num1 - num2, '-']
+  when '3'
+    [num1 * num2, 'x']
+  when '4'
+    [(num1.to_f / num2).round(2), '/']
+  else
+    result_and_operator(operation, num1, num2)
   end
 end
 
-def dramatic_effect
+# dun dun duuuun
+def dramatic_pause
   print "Calculating"
   3.times do
     print "."
     sleep(0.5)
   end
-  puts "\n"
+  puts "\n\n"
 end
 
-def play_again()
+# ask user if they would like to recalculate
+def play_again
   prompt('again')
-  recalculate = gets.chomp.upcase
+  gets.chomp.upcase
 end
 
 loop do
   num1 = get_number()
   num2 = get_number()
   operation = get_operation
-  result, operator = get_result(operation,num1,num2)
-  dramatic_effect
-  puts "#{num1} #{operator} #{num2} = #{result}"
+  result, operator = result_and_operator(operation, num1, num2)
+  dramatic_pause
+  puts "#{num1} #{operator} #{num2} = #{result} "
 
   break unless play_again().start_with?('Y')
-
 end
-
-
-
-
-
-
-
 
 # # start of program execution
 # loop do
@@ -181,4 +174,3 @@ end
 #     break
 #   end
 # end
-
