@@ -90,6 +90,7 @@ end
 
 # main body of code
 loop do
+  system('clear')
   num1 = get_number
   num2 = get_number
   operation = get_operation
@@ -99,77 +100,3 @@ loop do
 
   break unless play_again.start_with?('Y')
 end
-
-# # start of program execution
-# loop do
-#   # verify number 1 is a number
-#   num1 = ''
-#   loop do
-#     prompt('get_number')
-#     num1 = gets.chomp
-
-#     if number?(num1)
-#       break
-#     else
-#       prompt('not_number')
-#     end
-#   end
-
-#   # verify number 2 is a number
-#   num2 = ''
-#   loop do
-#     prompt('get_number')
-#     num2 = gets.chomp
-
-#     if number?(num2)
-#       break
-#     else
-#       prompt('not_number')
-#     end
-#   end
-
-#   #  convert numbers to interger or float
-#   if float?(num1) || float?(num2)
-#     num1 = num1.to_f
-#     num2 = num2.to_f
-#   else
-#     num1 = num1.to_i
-#     num2 = num2.to_i
-#   end
-
-#   # get operation and run
-#   loop do
-#     prompt('operation')
-#     operation = gets.chomp
-
-#     case operation
-#     when '1'
-#       result = num1 + num2
-#       operator = '+'
-#     when '2'
-#       result = num1 - num2
-#       operator = '-'
-#     when '3'
-#       result = num1 * num2
-#       operator = 'x'
-#     when '4'
-#       result = (num1.to_f / num2).round(2)
-#       operator = '/'
-#     else
-#       prompt('invalid_operation')
-#       next
-#     end
-
-#     puts "#{num1} #{operator} #{num2} = #{result}"
-#     break
-#   end
-
-#   # ask if user wants to go again
-#   prompt('again')
-#   recalculate = gets.chomp
-#   if recalculate.upcase.start_with?('Y')
-#     next
-#   else
-#     break
-#   end
-# end
