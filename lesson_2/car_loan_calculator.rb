@@ -64,6 +64,8 @@ SET monthly payment amount
 PRINT monthly payment amount (round to 2 decimal points)
 =end
 
+
+
 def prompt(message)
   puts "=> #{message}"
 end
@@ -74,16 +76,77 @@ def is_number?(input)
 end
 
 
-# Start of progrtam
+def get_loan_amount
+  loop do
+    print "Enter your loan amount: $"
+    loan_amount = gets.chomp
+
+    if is_number?(loan_amount) && loan_amount > 0
+      return loan_amount
+    else
+      prompt "Not a valid amount"
+    end
+  end
+end
+
+def get_apr
+  loop do
+    prompt "What is your APR? (10% written as 10. 2.5% as 2.5)"
+    apr = gets.chomp
+    next if apr.empty?
+
+    if is_number(apr) && apr.to_f >= 0 
+      break apr.to_f
+    else
+      prompt "Invalid entry!"
+    end
+  end
+
+def get_duration
+  loop do
+    prompt "How long is your loan duration (in years)?"
+    duration = gets.chomp
+    next if duration.empty?
+
+    if is_number(duration) && duration.to_f >= 0
+      break duration.to_f
+    end
+  end
+end
+
+def apr_to_monthly(apr)
+  (apr/100)/12
+end
+
+def years_to_months(duration)
+  duration * 12
+end
+
+def monthly_payment_amt(loan_amount, monthly_interest_rate, duration_months)
+  loan_amount * 
+  (monthly_interest_rate / 
+  (1 - (1 + monthly_interest_rate) **(-duration_months)))
+end
+
+def again?
+  prompt "Want to calculate another morgage? Y/N"
+  again = gets.chomp
+  again? if again.empty?
+
+  
+
+
+# Start of program
 loop do
   prompt "Welcome to Loan Calculator!"
   prompt "---------------------------"
 
   # Validating loop for loan amount and conversion to float
+
   loan_amount = ''
   loop do
-    prompt "Enter your loan amount"
-    loan_amount = gets.chomp
+    
+    
 
     if is_number?(loan_amount) && loan_amount.empty? == false && loan_amount.to_f > 0
       loan_amount = loan_amount.to_f.round(2)
@@ -132,7 +195,7 @@ loop do
                       (monthly_interest_rate / 
                       (1 - (1 + monthly_interest_rate) **(-duration_months)))
 
-  prompt "You're monthly payment is $#{monthly_payment.round(2)}"
+  prompt "You're monthly payment is #{format($%.2f, monthly_payment)}"
 
   # Prompt to re-run or exit program
   prompt "Would you like to calculate another payment? Y/N"

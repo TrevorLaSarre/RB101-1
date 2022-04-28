@@ -69,8 +69,6 @@ def result_and_operator(operation, num1, num2)
     [num1 * num2, 'x']
   when '4'
     [(num1.to_f / num2).round(2), '/']
-  else
-    result_and_operator(operation, num1, num2)
   end
 end
 
@@ -99,7 +97,7 @@ loop do
   dramatic_pause
   puts "#{num1} #{operator} #{num2} = #{result}"
 
-  break unless play_again().start_with?('Y')
+  break unless play_again.start_with?('Y')
 end
 
 # # start of program execution
