@@ -90,6 +90,7 @@ def play_again
   gets.chomp.upcase
 end
 
+# main body of code
 loop do
   num1 = get_number
   num2 = get_number
