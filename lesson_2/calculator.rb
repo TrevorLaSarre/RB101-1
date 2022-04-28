@@ -50,15 +50,15 @@ end
 # asks user for valid operation
 def get_operation
   operation = ''
-  until %w(1 2 3 4).include?(operation) do
-    prompt ('invalid_operation') unless operation.empty?
+  until %w(1 2 3 4).include?(operation)
+    prompt('invalid_operation') unless operation.empty?
     prompt('operation')
     operation = gets.chomp
   end
   operation
 end
 
-# returns an array with result of peration at index 0 and operator used at index 1
+# returns array [result,operator]
 def result_and_operator(operation, num1, num2)
   case operation
   when '1'
@@ -96,7 +96,7 @@ loop do
   operation = get_operation
   result, operator = result_and_operator(operation, num1, num2)
   dramatic_pause
-  puts "#{num1} #{operator} #{num2} = #{result} "
+  puts "#{num1} #{operator} #{num2} = #{result}"
 
   break unless play_again().start_with?('Y')
 end
