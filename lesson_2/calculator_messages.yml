@@ -1,8 +1,9 @@
 
 en:
-  get_number: "Enter a number" 
+  first_number: "Enter the first number"
+  second_number: "Enter the second number"
   not_number: "Not a valid number"
-  operation: "What operation would you like to perform? (type the number) \n 
+  operation: "What calculation would you like to perform? (type the number) \n 
               (1)add\n
               (2)subtract\n
               (3)multiply\n
@@ -11,9 +12,10 @@ en:
   again: "Would you like to perform another calculation? Y/N"
   number_is: "number is"
 es:
-  get_number: "Enter a number (but in spanish)" 
+  first_number: "Enter the first number (but in spanish)"
+  second_number: "Enter the second number (but in spanish)" 
   not_number: "Not a valid number (but in spanish)"
-  operation: "What operation would you like to perform? (type the number) \n 
+  operation: "What calculation would you like to perform? (type the number) \n 
               (1)add\n
               (2)subtract\n
               (3)multiply\n
