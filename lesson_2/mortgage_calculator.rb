@@ -32,9 +32,9 @@ def get_loan_amount
   end
 end
 
-#removes any characters that would affect calculation
+# removes any characters that would affect calculation
 def remove_extra_characters(entry)
-  entry.gsub!(/[,_$%]/,'')
+  entry.gsub!(/[,_$%]/, '')
 end
 
 # ask user to input APR
@@ -89,7 +89,6 @@ def again?
   prompt('again')
   gets.chomp
 end
-
 
 ## PROGRAM MAIN
 prompt('welcome')
