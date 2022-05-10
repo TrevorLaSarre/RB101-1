@@ -1,5 +1,5 @@
 welcome: "Welcome to Rock, Paper, Scissors, Lizard, Spock"
-instructions: 'The game ends when player or computer wins three times!'
+instructions: 'The game ends when the player or the computer wins three times!'
 enter_choice: "rock(r), paper(p), scissors(sc), lizard(l), spock(sp), SHOOT!!!:"
 player_choice: "You have chosen %{choice}"
 computer_choice: "Computer has chosen %{choice}"

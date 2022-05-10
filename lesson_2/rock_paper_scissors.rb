@@ -8,37 +8,11 @@ def prompt(message)
   puts "=> #{MESSAGES[message]}"
 end
 
-
 def var_prompt(message, variable)
   puts "=> #{format(MESSAGES[message], choice: variable)}"
 end
 
-def get_user_choice
-  user_choice = ''
-  loop do
-    prompt('enter_choice')
-    user_choice = convert_user_choice(gets.chomp)
-    break if VALID_CHOICES.include?(user_choice)
-    prompt('invalid')
-  end
-  user_choice
-end
-
-def computer_choice_generator
-  VALID_CHOICES.sample
-end
-
-def convert_user_choice(user_choice)
-  user_choice = user_choice.downcase
-  if user_choice.start_with?('r') then 'rock'
-  elsif user_choice.start_with?('sc') then 'scissors'
-  elsif user_choice.start_with?('p') then 'paper'
-  elsif user_choice.start_with?('sp') then 'spock'
-  elsif user_choice.start_with?('l') then 'lizard'
-  end
-end
-
-#Display Methods
+# Display Methods
 def display_action(user_choice, computer_choice)
   win_actions = { 'rock' => { 'scissors' => 'ROCK SMASHES SCISSORS!',
                               'lizard' => 'ROCK SMASHES LIZARD!' },
@@ -100,17 +74,42 @@ def display_final_winner(score)
 end
 
 def display_countdown
-  puts 'Hit [enter] to begin!!!'
-  gets
+  system('clear')
   [3, 2, 1].each do |element|
-    puts element.to_s
+    print element.to_s
     sleep(0.5)
+    system('clear')
   end
-  puts 'GO!!!'
-  sleep(0.25)
+  print 'GO!!!'
+  sleep(0.5)
 end
 
 # Game Logic Methods
+def get_user_choice
+  user_choice = ''
+  loop do
+    prompt('enter_choice')
+    user_choice = convert_user_choice(gets.chomp)
+    break if VALID_CHOICES.include?(user_choice)
+    prompt('invalid')
+  end
+  user_choice
+end
+
+def computer_choice_generator
+  VALID_CHOICES.sample
+end
+
+def convert_user_choice(user_choice)
+  user_choice = user_choice.downcase
+  if user_choice.start_with?('r') then 'rock'
+  elsif user_choice.start_with?('sc') then 'scissors'
+  elsif user_choice.start_with?('p') then 'paper'
+  elsif user_choice.start_with?('sp') then 'spock'
+  elsif user_choice.start_with?('l') then 'lizard'
+  end
+end
+
 def determine_victor(user_choice, computer_choice)
   victory = { 'rock' => ['scissors', 'lizard'],
               'paper' => ['rock', 'spock'],
@@ -133,7 +132,7 @@ def add_score(victor, score)
 end
 
 def next_round
-  puts 'Hit [enter] for next round!'
+  print 'Hit [enter] for next round!'
   gets
 end
 
@@ -142,16 +141,24 @@ def play_again?
   gets.chomp
 end
 
+def start_game
+  print 'Hit [enter] to begin!'
+  gets
+end
+
 def end_game?(score)
   score['player'] == 3 || score['computer'] == 3
 end
 
 # Main Program
-loop do
   system('clear')
-  score = { 'player' => 0, 'computer' => 0, 'tie' => 0, 'total' => 0 }
+  
   prompt('welcome')
   prompt('instructions')
+  start_game  
+  
+loop do
+  score = { 'player' => 0, 'computer' => 0, 'tie' => 0, 'total' => 0 }
   display_countdown
 
   loop do
