@@ -10,6 +10,7 @@ def prompt(message)
 end
 
 # playing around with a prompt that allows interpolation from yaml file
+# this raises an error in rubocop but I've already let them know about the bug
 def var_prompt(message, variable)
   puts "=> #{format(MESSAGES[message], choice: variable)}"
 end
@@ -153,7 +154,7 @@ end
 
 # player hits enter for next round
 def next_round
-  puts "Hit [enter] for next round!"
+  puts 'Hit [enter] for next round!'
   gets
 end
 
