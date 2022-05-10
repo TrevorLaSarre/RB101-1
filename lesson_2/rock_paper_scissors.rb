@@ -4,6 +4,7 @@ MESSAGES = YAML.load_file('rps_message.yml')
 
 VALID_CHOICES = %w(rock paper scissors lizard spock)
 
+# Display Methods
 def prompt(message)
   puts "=> #{MESSAGES[message]}"
 end
@@ -12,7 +13,6 @@ def var_prompt(message, variable)
   puts "=> #{format(MESSAGES[message], choice: variable)}"
 end
 
-# Display Methods
 def display_action(user_choice, computer_choice)
   win_actions = { 'rock' => { 'scissors' => 'ROCK SMASHES SCISSORS!',
                               'lizard' => 'ROCK SMASHES LIZARD!' },
@@ -151,12 +151,12 @@ def end_game?(score)
 end
 
 # Main Program
-  system('clear')
-  
-  prompt('welcome')
-  prompt('instructions')
-  start_game  
-  
+system('clear')
+
+prompt('welcome')
+prompt('instructions')
+start_game
+
 loop do
   score = { 'player' => 0, 'computer' => 0, 'tie' => 0, 'total' => 0 }
   display_countdown
