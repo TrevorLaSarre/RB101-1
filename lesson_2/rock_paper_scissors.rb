@@ -4,19 +4,17 @@ MESSAGES = YAML.load_file('rps_message.yml')
 
 VALID_CHOICES = %w(rock paper scissors lizard spock)
 
-## Prompt output Methods
+# Prompt output Methods
 def prompt(message)
   puts "=> #{MESSAGES[message]}"
 end
 
-# playing around with a prompt that allows interpolation from yaml file
-# this raises an error in rubocop but I've already let them know about the bug
+
 def var_prompt(message, variable)
   puts "=> #{format(MESSAGES[message], choice: variable)}"
 end
 
-## Player/Computer choice setting
-# get user choice
+# Player/Computer choice setting methods
 def get_user_choice
   user_choice = ''
   loop do
@@ -28,12 +26,10 @@ def get_user_choice
   user_choice
 end
 
-# computer choice
 def computer_choice_generator
   VALID_CHOICES.sample
 end
 
-# allows user to type minimal letters for choice
 def convert_user_choice(user_choice)
   user_choice = user_choice.downcase
   if user_choice.start_with?('r') then 'rock'
@@ -45,7 +41,6 @@ def convert_user_choice(user_choice)
 end
 
 ## Display Methods
-# display action of choices
 def display_action(user_choice, computer_choice)
   win_actions = { 'rock' => { 'scissors' => 'ROCK SMASHES SCISSORS!',
                               'lizard' => 'ROCK SMASHES LIZARD!' },
@@ -65,7 +60,6 @@ def display_action(user_choice, computer_choice)
   end
 end
 
-# displays winner of round
 def display_victor(victor)
   if victor == 'player' || victor == 'computer'
     puts "=> #{victor.upcase} WINS!"
@@ -76,7 +70,6 @@ def display_victor(victor)
   sleep(0.5)
 end
 
-# displays what each player (user and computer) chooses
 def display_choices(user_choice, computer_choice)
   var_prompt('player_choice', user_choice)
   var_prompt('computer_choice', computer_choice)
@@ -88,7 +81,6 @@ def display_choices(user_choice, computer_choice)
   puts '.'
 end
 
-# display board
 def display_score_board(score)
   puts "\n"
   puts "   Player: #{score['player']}"
@@ -99,31 +91,28 @@ def display_score_board(score)
   puts '.....................'
 end
 
-# displays final winner after all rounds
-def display_total_winner(score)
+def display_final_winner(score)
   puts '############################'
   if score['player'] > score['computer']
     puts "=> PLAYER WINS: #{score['player']} to #{score['computer']}!"
   elsif score['player'] < score['computer']
     puts "=> COMPUTER WINS: #{score['computer']} to #{score['player']}!"
-  else
-    puts '=> It\'s a draw!'
   end
   puts '############################'
 end
 
-# countdown printer to start of game
 def display_countdown
+  puts 'Hit [enter] to begin!!!'
+  gets
   [3, 2, 1].each do |element|
     puts element.to_s
-    sleep(0.75)
+    sleep(0.5)
   end
   puts 'GO!!!'
-  sleep(0.5)
+  sleep(0.25)
 end
 
 ## Scorekeeper Methods
-# determine winner
 def determine_victor(user_choice, computer_choice)
   victory = { 'rock' => ['scissors', 'lizard'],
               'paper' => ['rock', 'spock'],
@@ -140,51 +129,52 @@ def determine_victor(user_choice, computer_choice)
   end
 end
 
-# score tracker
 def add_score(victor, score)
   score['total'] += 1
   score[victor] += 1
 end
 
-# ask player for another match
-def play_again?
-  prompt('play_again')
-  gets.chomp
-end
-
-# player hits enter for next round
 def next_round
   puts 'Hit [enter] for next round!'
   gets
 end
 
-# returns true if player or computer wins 3 rounds
+def play_again?
+  prompt('play_again')
+  gets.chomp
+end
+
 def end_game?(score)
   score['player'] == 3 || score['computer'] == 3
 end
 
 ## Main Program
-system('clear')
-score = { 'player' => 0, 'computer' => 0, 'tie' => 0, 'total' => 0 }
-prompt('welcome')
-display_countdown
-
 loop do
   system('clear')
+  score = { 'player' => 0, 'computer' => 0, 'tie' => 0, 'total' => 0 }
+  prompt('welcome')
+  prompt('instructions')
+  display_countdown
 
-  user_choice = get_user_choice
-  computer_choice = computer_choice_generator
+  loop do
+    system('clear')
 
-  display_choices(user_choice, computer_choice)
+    user_choice = get_user_choice
+    computer_choice = computer_choice_generator
 
-  victor = determine_victor(user_choice, computer_choice)
-  add_score(victor, score)
+    display_choices(user_choice, computer_choice)
 
-  display_action(user_choice, computer_choice)
-  display_victor(victor)
-  display_score_board(score)
+    victor = determine_victor(user_choice, computer_choice)
+    add_score(victor, score)
 
-  next_round unless end_game?(score)
+    display_action(user_choice, computer_choice)
+    display_victor(victor)
+    display_score_board(score)
 
-  break display_total_winner(score) if end_game?(score)
+    next_round unless end_game?(score)
+
+    break display_final_winner(score) if end_game?(score)
+  end
+
+  break unless play_again?.downcase.start_with?('y')
 end
