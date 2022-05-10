@@ -1,0 +1,8 @@
+welcome: "Welcome to Rock, Paper, Scissors, Lizard, Spock"
+enter_choice: "rock(r), paper(p), scissors(sc), lizard(l), spock(sp), SHOOT!!!:"
+player_choice: "You have chosen %{choice}"
+computer_choice: "Computer has chosen %{choice}"
+play_again: 'Want to play again?'
+invalid: "What kind of hand gesture is that?!!\n\n
+          (╯°□°)╯ ┻━┻\n\n
+          Please enter rock, paper, or scissors...\n"
