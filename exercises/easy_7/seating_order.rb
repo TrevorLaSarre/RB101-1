@@ -24,23 +24,8 @@
 #   end
 # end
 
-# given a number of chairs N
-# create a chairs array an array of 1..N
-# create an Empty array for order
-# push into the array
-#   smallest number of the largest difference from existing numbers in the E array
-#   remove that number from the chairs array
 
-#given a number of chairs n
-
-# create chairs array of 1..n
-# create an empty array for seating_order
-
-
-# get next_seat
-#   loop through existing seats until the second to last element
-#     get difference between curre
-#     push result into 
+#=================================================================================================#
 
 # get differences between taken_seats
 #   set greatest = []
@@ -77,30 +62,11 @@
 # return the last element of the seating order
 
 
-# def get_max_difference(next_chair, chairs, seating_order)
-#   result = []
-#   chairs.each do |chair|
-#     result << (next_chair - chair).abs
-#   end
-#   result.max
-# end
-
-# def get_max_distance_seats(next_chair, chairs, max_difference, seating_order)
-#   result = []
-#   chairs.each do |chair|
-
-#     result << chair if ((next_chair - chair).abs == max_difference)
-#   end
-
-#   result.min
-# end
-
 def which_seat(seating_order)
   greatest = []
   space = 0
-  seating_order = seating_order.sort
 
-  seating_order.each.with_index do |chair, idx|
+  seating_order.sort.each.with_index do |chair, idx|
     break if idx == (seating_order.size - 1)
     if greatest.empty?
       greatest = [chair, seating_order[idx + 1]]
@@ -133,10 +99,30 @@ def last_chair(n)
   seating_order
 end
 
-# p which_seat([1,10,5]) # => 1, 5, 10
+
 p last_chair(10)
 p last_chair(9)
-p last_chair(11)
+p last_chair(111)
+
+
+
+# def get_max_difference(next_chair, chairs, seating_order)
+#   result = []
+#   chairs.each do |chair|
+#     result << (next_chair - chair).abs
+#   end
+#   result.max
+# end
+
+# def get_max_distance_seats(next_chair, chairs, max_difference, seating_order)
+#   result = []
+#   chairs.each do |chair|
+
+#     result << chair if ((next_chair - chair).abs == max_difference)
+#   end
+
+#   result.min
+# end
 # def last_chair(n)
 #   chairs = (1..n).to_a
 #   seating_order = []
@@ -170,3 +156,20 @@ p last_chair(11)
 
 # p last_chair(10) #== 9
 
+# def get_max_difference(next_chair, chairs, seating_order)
+#   result = []
+#   chairs.each do |chair|
+#     result << (next_chair - chair).abs
+#   end
+#   result.max
+# end
+
+# def get_max_distance_seats(next_chair, chairs, max_difference, seating_order)
+#   result = []
+#   chairs.each do |chair|
+
+#     result << chair if ((next_chair - chair).abs == max_difference)
+#   end
+
+#   result.min
+# end
