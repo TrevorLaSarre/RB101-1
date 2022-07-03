@@ -49,10 +49,6 @@ print results
 # MINUTES_PER_DAY = MINUTES_PER_HOUR * HOURS_PER_DAY
 
 # def normalize_minutes_to_0_through_1439(minutes)
-#   while minutes < 0
-#     minutes += MINUTES_PER_DAY
-#   end
-
 #   minutes % MINUTES_PER_DAY
 # end
 
@@ -61,39 +57,33 @@ print results
 #   hours, minutes = delta_minutes.divmod(MINUTES_PER_HOUR)
 #   format('%02d:%02d', hours, minutes)
 # end
-SECONDS_PER_MINUTE = 60
+
 MINUTES_PER_HOUR = 60
-SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR
 HOURS_PER_DAY = 24
 MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR
-SECONDS_PER_DAY = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY
 
-p SECONDS_PER_DAY
+#   time_24_hour = time_hours + ':' + time_minutes
+# end
+# 1. set hour = 00
+#    set minute = 00
+# 1. normalize minutes to minutes in a single day
+# 2. if normalized minutes == 0 retunr 00:00
+# 2. split into hours and minutes
+# 3. if positive
+#     add hours to hour and minute to minute
+#   if negative
+#     subtract hours from 23 and subtract minutes from 60
 
 def time_of_day(minutes)
-  time_hours = minutes / 60
-
-  while time_hours > 24
-    time_hours = time_hours / 24
-  end 
-
-  while time_hours < 0 
-    time_hours = 24 + time_hours
-  end
-  time_hours = "#{time_hours}"
-
-  time_minutes = "#{minutes % 60}"
-
-  time_hours.prepend('0') if time_hours.size < 2
-  time_minutes.prepend('0') if time_minutes.size < 2
-
-  time_24_hour = time_hours + ':' + time_minutes
+  minutes = minutes % MINUTES_PER_DAY
+  hours, mins = minutes.divmod(MINUTES_PER_HOUR)
+  format("%02d:%02d", hours, mins)
 end
 
 p time_of_day(0) == "00:00"
 p time_of_day(-3) == "23:57"
 p time_of_day(35) == "00:35"
 p time_of_day(-1437) == "00:03"
-p time_of_day(300['0) == "02:00"
+p time_of_day(3000) == "02:00"
 p time_of_day(800) == "13:20"
 p time_of_day(-4231) == "01:29"
