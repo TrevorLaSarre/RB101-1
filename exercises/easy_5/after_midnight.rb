@@ -61,30 +61,32 @@ print results
 #   hours, minutes = delta_minutes.divmod(MINUTES_PER_HOUR)
 #   format('%02d:%02d', hours, minutes)
 # end
+SECONDS_PER_MINUTE = 60
+MINUTES_PER_HOUR = 60
+SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR
+HOURS_PER_DAY = 24
+MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR
+SECONDS_PER_DAY = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY
+
+p SECONDS_PER_DAY
 
 def time_of_day(minutes)
-  # calculate hours
   time_hours = minutes / 60
 
-  # convert to 24 hour format
   while time_hours > 24
     time_hours = time_hours / 24
   end 
 
-  # convert negative hours
   while time_hours < 0 
     time_hours = 24 + time_hours
   end
   time_hours = "#{time_hours}"
 
-  # calculate minutes
   time_minutes = "#{minutes % 60}"
 
-  # reformat hours and minutes
   time_hours.prepend('0') if time_hours.size < 2
   time_minutes.prepend('0') if time_minutes.size < 2
 
-  # return desired output string
   time_24_hour = time_hours + ':' + time_minutes
 end
 
@@ -92,6 +94,6 @@ p time_of_day(0) == "00:00"
 p time_of_day(-3) == "23:57"
 p time_of_day(35) == "00:35"
 p time_of_day(-1437) == "00:03"
-p time_of_day(3060) == "03:00"
+p time_of_day(300['0) == "02:00"
 p time_of_day(800) == "13:20"
 p time_of_day(-4231) == "01:29"
