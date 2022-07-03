@@ -92,20 +92,33 @@ def computer_defense(brd, line)
   end
 end
 
-def computer_places_piece!(brd)
+def offense_possible(brd)
   square = nil
-
   WINNING_LINES.each do |line|
     square = computer_offense(brd, line)
     break if square
   end
+  square
+end
 
-  unless square
-    WINNING_LINES.each do |line|
-      square = computer_defense(brd, line)
-      break if square
-    end
+def defense_possible(brd)
+  square = nil
+  WINNING_LINES.each do |line|
+    square = computer_defense(brd, line)
+    break if square
   end
+  square
+end
+
+def computer_places_piece!(brd)
+  square = offense_possible(brd)
+  square = defense_possible(brd) unless square
+  # unless square
+  #   WINNING_LINES.each do |line|
+  #     square = computer_defense(brd, line)
+  #     break if square
+  #   end
+  # end
   square = 5 if brd[5] == INITIAL_MARKER
   square = empty_squares(brd).sample if !square
   brd[square] = $computer_marker
@@ -206,7 +219,7 @@ end
 system 'clear'
 prompt "Welcome to Tic Tac Toe!"
 prompt "First to 5 wins... wins!"
-prompt "After selecting who starts, each round rotates who goes first."
+prompt "After selecting who starts, loser starts concurrent rounds."
 prompt "Hit [enter] to start!"
 gets
 
@@ -221,9 +234,11 @@ loop do # full game reset
     ($player1_marker, $player2_marker = set_markers)
 
   current_player = set_play_order(num_players)
+  start_player = current_player
   loop do # series of games to 5 loop with conditional exit
     board = initialize_board
-    # alternate_player(current_player) if last_start == current_player
+    # current_player = alternate_player(current_player, num_players) if start_player != current_player
+    # start_player = alternate_player(current_player, num_players)
 
     loop do # play game loop
       display_board(board, score)
