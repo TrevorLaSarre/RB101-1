@@ -1,12 +1,14 @@
 =begin
+Problem
 given a number of rounds flip lights switches once for any numbered switches that are evenly divisible by the number of the round
 at the end of the rounds return an array of the switches in the on position
 
+Data Structures
+input: integer
+middle: hash of switches and on/off position
+output: array of switches still on
 
-input integer
-middle hash of switches and on/off position
-output array of switches still on
-
+Algorithm:
 Get a number of light switches which also represents the number of rounds
 create a hash with a key for each light switch, initally setting the values at 0
   set empty hash
@@ -23,6 +25,7 @@ iterate through the has again
     push the corresponding key into the results array
 
 return the results array
+
 =end
 
 # def create_switches(num)
