@@ -43,3 +43,19 @@ end
 p two_element_subarrays(a)
 p ' '
 p all_ranges_subarrays(a)
+
+def three_element_subarrays(a)
+  a.each_with_index.with_object([]) do |(element, idx), sub_arrays|
+    second_element = idx + 1
+    until second_element == a.size
+      third_element = second_element + 1
+      until third_element == a.size
+        sub_arrays << [element, a[second_element], a[third_element]]
+        third_element += 1
+        p "third element: #{third_element}"
+      end
+      second_element += 1
+      p "second element: #{second_element}"
+    end
+  end
+end
