@@ -1,5 +1,3 @@
-require 'pry'
-
 INITIAL_MARKER = ' '
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[2, 5, 8], [1, 4, 7], [3, 6, 9]] + # columns
@@ -13,7 +11,7 @@ end
 # rubocop:disable Metrics/AbcSize
 def display_board(brd, score)
   system 'clear'
-  puts "#{score.keys[0]}: #{$player1_marker} #{score.keys[1]}: #{$player1_marker == 'X' ? 'O' : 'X'}"
+  puts "#{score.keys[0]}: #{$player1_marker} | #{score.keys[1]}: #{$player2_marker}"
   puts ""
   puts "     |     |"
   puts "  #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
@@ -70,18 +68,20 @@ def player_places_piece!(brd, current_player)
   brd[square] = current_player
 end
 
-def place_piece!(brd, current_player)
+def place_piece!(brd, current_player, num_players)
   if current_player == $player1_marker
     player_places_piece!(brd, current_player)
-  elsif current_player == $computer_marker
-    computer_places_piece!(brd)
   elsif current_player == $player2_marker
-    player_places_piece!(brd, current_player)
+    if num_players == 1
+      computer_places_piece!(brd)
+    else
+      player_places_piece!(brd, current_player)  
+    end
   end
 end
 
 def computer_offense(brd, line)
-  if brd.values_at(*line).count($computer_marker) == 2 
+  if brd.values_at(*line).count($player2_marker) == 2 
     brd.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
   end
 end
@@ -115,7 +115,7 @@ def computer_places_piece!(brd)
   square = defense_possible(brd) if !square
   square = 5 if brd[5] == INITIAL_MARKER
   square = empty_squares(brd).sample if !square
-  brd[square] = $computer_marker
+  brd[square] = $player2_marker
 end
 
 def board_full?(brd)
@@ -130,10 +130,8 @@ def detect_winner(brd, num_players)
   WINNING_LINES.each do |line|
     if brd.values_at(*line).all?($player1_marker)
       num_players == 1 ? (return 'Player') : (return 'Player 1')
-    elsif brd.values_at(*line).all?($computer_marker)
-      return 'Computer'
     elsif brd.values_at(*line).all?($player2_marker)
-      return 'Player 2'
+      num_players == 1 ? (return 'Computer') : (return 'Player 2')
     end
   end
   nil
@@ -155,19 +153,15 @@ def hit_enter(round)
   gets.chomp
 end
 
-def alternate_player(current_player, num_players)
-  if num_players == 1
-    current_player == $player1_marker ? $computer_marker : $player1_marker
-  elsif num_players == 2
-    current_player == $player1_marker ? $player2_marker : $player1_marker
-  end
+def alternate_player(current_player)
+  current_player == $player1_marker ? $player2_marker : $player1_marker
 end
 
-def set_markers
+def set_markers(score)
   $player1_marker = ''
   choices = ['X', 'O']
   loop do
-    prompt "Pick your marker: X or O."
+    prompt "Pick (#{score.keys.first}) marker: X or O."
     $player1_marker = gets.upcase.chomp
     break if choices.include?($player1_marker)
     prompt "Invalid choice"
@@ -175,16 +169,14 @@ def set_markers
   $player1_marker == choices[0] ? choices : choices.reverse
 end
 
-def set_play_order(num_players)
+def set_play_order(num_players, score)
   answer = ''
   loop do
-    prompt "Would you like to go first? (y/n)"
+    prompt "Would (#{score.keys[0]}) like to go first? (y/n)"
     answer = gets.downcase.chomp
     break if answer.start_with?('y') || answer.start_with?('n')
   end
-  num_players == 1 ?
-    (answer.start_with?('y') ? $player1_marker : $computer_marker) :
-    (answer.start_with?('y') ? $player1_marker : $player2_marker)
+  answer.start_with?('y') ? $player1_marker : $player2_marker
 end 
 
 def get_num_players
@@ -202,10 +194,10 @@ end
 
 def create_score(num_players)
   case num_players
+  when 1
+    return { 'Player' => 0, 'Computer' => 0, 'Tie' => 0 }  
   when 2
     return {'Player 1' => 0, 'Player 2' => 0, 'Tie' => 0 }
-  when 1
-    return { 'Player' => 0, 'Computer' => 0, 'Tie' => 0 }
   end
 end
 
@@ -217,27 +209,22 @@ prompt "After selecting who starts, loser starts concurrent rounds."
 prompt "Hit [enter] to start!"
 gets
 
+
 loop do # full game reset
   num_players = get_num_players
   score = create_score(num_players)
   round = 1
   early_exit = nil
-  board = nil
-  num_players == 1 ?
-    ($player1_marker, $computer_marker = set_markers) :
-    ($player1_marker, $player2_marker = set_markers)
+  # board = nil
+  $player1_marker, $player2_marker = set_markers(score)
 
-  current_player = set_play_order(num_players)
-  start_player = current_player
+  current_player = set_play_order(num_players, score)
   loop do # series of games to 5 loop with conditional exit
     board = initialize_board
-    # current_player = alternate_player(current_player, num_players) if start_player != current_player
-    # start_player = alternate_player(current_player, num_players)
-
     loop do # play game loop
       display_board(board, score)
-      place_piece!(board, current_player)
-      current_player = alternate_player(current_player, num_players)
+      place_piece!(board, current_player, num_players)
+      current_player = alternate_player(current_player)
       break if someone_won?(board, num_players) || board_full?(board)
     end
 
@@ -252,12 +239,12 @@ loop do # full game reset
              score[score.keys[1]] == 5 ||
              early_exit.downcase.start_with?('e')
   end
-  system 'clear'
-  prompt "==========="
+  system 'clear'  
+  prompt "============"
   prompt "Final Score"
   display_score(score)
   break if early_exit.downcase.start_with?('e')
-  prompt "Play Again? y/n"
+  prompt "Reset and Play Again? y/n"
   answer = gets.chomp
   break unless answer.downcase.start_with?('y')
 end
