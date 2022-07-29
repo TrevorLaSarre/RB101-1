@@ -32,10 +32,10 @@ end
 
 def display_score(score)
   prompt "============"
-  puts "   SCORE"
-  puts "   #{score.keys[0]}: #{score[score.keys[0]]}"
-  puts "   #{score.keys[1]}: #{score[score.keys[1]]}"
-  puts "   Ties: #{score['Tie']}"
+  puts "SCORE".center(18)
+  puts "   #{score.keys[0]}: #{score[score.keys[0]]}".rjust(14)
+  puts "   #{score.keys[1]}: #{score[score.keys[1]]}".rjust(14)
+  puts "   Ties: #{score['Tie']}".rjust(14)
   prompt "============"
 end
 
