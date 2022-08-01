@@ -29,16 +29,16 @@ determing winners - 21 or highest without going over 21
 =end
 CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, :jack, :queen, :king, :ace]
 
-deck_makeup = {
+DECK_MAKEUP = {
                 hearts:   CARDS.dup,
                 clubs:    CARDS.dup,
                 diamonds: CARDS.dup,
                 spades:   CARDS.dup
 }
 
-def create_deck(deck_makeup)
+def create_deck
   deck = []
-  deck_makeup.each do |suit, ranks|
+  DECK_MAKEUP.each do |suit, ranks|
     ranks.each do |rank|
       deck << [suit, rank]
     end
@@ -46,12 +46,56 @@ def create_deck(deck_makeup)
   deck
 end
 
-deck = create_deck(deck_makeup)
+
+# def display_card(card)
+#   puts "+---------+" 
+#   puts "|".ljust(8) + "#{card[1]}".ljust(2) + "|"
+#   puts "|         |"
+#   puts "|".ljust(6)  +  "#{card[0]}" +     "|".rjust(6)
+#   puts "|         |"
+#   puts "|" + "#{card[1]}".rjust(2)  + "|".rjust(8)
+#   puts "+---------+"
+# end
+
+def display_card(card)
+  cards = []
+  cards << "+---------+" 
+  cards << "|".ljust(8) + "#{card[1]}".ljust(2) + "|"
+  cards << "|         |"
+  cards << "|".ljust(6)  +  "#{card[0]}" +     "|".rjust(6)
+  cards << "|         |"
+  cards << "|" + "#{card[1]}".rjust(2)  + "|".rjust(8)
+  cards << "+---------+"
+  cards
+end
 
 
+suits = ['♠', '♣', '♥', '♦']
 
-deck.shuffle!
 
-deck_count = {}
+table = []
+player_cards = [['♠', '10'], ['♣', '6'] ]
+
+player_cards.map! do |card|
+  display_card(card)
+end
+
+puts player_cards.transpose.map {|card| card.join('  ') }
+# Main Program
+# deck = create_deck.shuffle!
+# Deal cards to player
+# deal to dealer
+# loop
+#   Player turn
+#   check bust
+# end
+# loop
+#   dealer turn
+#   check win/bust
+# end
+# check winner
+# play again?
+
+
 p deck
 
