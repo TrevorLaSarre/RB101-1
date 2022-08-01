@@ -1,7 +1,7 @@
 =begin
 1. Initialize deck
         create deck of cards
-        sort the deck
+        shuffle the deck
 2. Deal cards to player and dealer
         deal out cards to player and computer (removing from the deck)
 3. Player turn: hit or stay
@@ -25,15 +25,18 @@ determing winners - 21 or highest without going over 21
         1 if 11 would cause player or dealer to bust
         this also includes the case for multiple aces in a hand (an ace by ace basis) baduhn
 
-
+dealer rules
+  + if the cards are less than 17 the dealer must hit (unless the player has already busted)
+  +  
 =end
-CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, :jack, :queen, :king, :ace]
-
+CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
+suits = ['♠', '♣', '♥', '♦']
+:♠
 DECK_MAKEUP = {
-                hearts:   CARDS.dup,
-                clubs:    CARDS.dup,
-                diamonds: CARDS.dup,
-                spades:   CARDS.dup
+                '♥' => CARDS.dup,
+                '♣' => CARDS.dup,
+                '♦' => CARDS.dup,
+                '♠' => CARDS.dup
 }
 
 def create_deck
@@ -46,28 +49,28 @@ def create_deck
   deck
 end
 
+deck = create_deck
 
-# def display_card(card)
-#   puts "+---------+" 
-#   puts "|".ljust(8) + "#{card[1]}".ljust(2) + "|"
-#   puts "|         |"
-#   puts "|".ljust(6)  +  "#{card[0]}" +     "|".rjust(6)
-#   puts "|         |"
-#   puts "|" + "#{card[1]}".rjust(2)  + "|".rjust(8)
-#   puts "+---------+"
-# end
+
 
 def display_card(card)
   cards = []
   cards << "+---------+" 
   cards << "|".ljust(8) + "#{card[1]}".ljust(2) + "|"
   cards << "|         |"
-  cards << "|".ljust(6)  +  "#{card[0]}" +     "|".rjust(6)
+  cards << "|".ljust(5)  +  "#{card[0]}" +     "|".rjust(5)
   cards << "|         |"
   cards << "|" + "#{card[1]}".rjust(2)  + "|".rjust(8)
   cards << "+---------+"
   cards
 end
+
+all_cards = deck.map do |card|
+  display_card(card)
+end
+
+
+
 
 
 suits = ['♠', '♣', '♥', '♦']
