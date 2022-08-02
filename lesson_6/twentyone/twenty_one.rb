@@ -30,14 +30,16 @@ dealer rules
   +  
 =end
 CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
-suits = ['♠', '♣', '♥', '♦']
-:♠
+
+SUITS = ['♥', '♣', '♦', '♠']
+
 DECK_MAKEUP = {
-                '♥' => CARDS.dup,
-                '♣' => CARDS.dup,
-                '♦' => CARDS.dup,
-                '♠' => CARDS.dup
+                SUITS[0] => CARDS.dup,
+                SUITS[1] => CARDS.dup,
+                SUITS[2] => CARDS.dup,
+                SUITS[3] => CARDS.dup
 }
+
 
 def create_deck
   deck = []
@@ -48,12 +50,8 @@ def create_deck
   end
   deck
 end
-
-deck = create_deck
-
-
-
-def display_card(card)
+ 
+def card_image(card)
   cards = []
   cards << "+---------+" 
   cards << "|".ljust(8) + "#{card[1]}".ljust(2) + "|"
@@ -65,27 +63,157 @@ def display_card(card)
   cards
 end
 
-all_cards = deck.map do |card|
-  display_card(card)
+def deal_card!(deck)
+  deck.pop
 end
 
-
-
-
-
-suits = ['♠', '♣', '♥', '♦']
-
-
-table = []
-player_cards = [['♠', '10'], ['♣', '6'] ]
-
-player_cards.map! do |card|
-  display_card(card)
+def player_turn(deck)
+  loop do
+    puts "What would you like to do? (hit or stay)"
+    move = gets.chomp
+    if move.downcase == 'h' || move.downcase == 'hit'
+      break deal_card!(deck)
+    elsif move.downcase == 's' || move.downcase == 'stay'
+      break nil
+    end
+      puts "Not a valid move!"
+  end
 end
 
-puts player_cards.transpose.map {|card| card.join('  ') }
+def display_cards(cards)
+  table = cards.map do |card|
+            card_image(card)
+          end
+  puts table.transpose.map { |sections| sections.join('  ') }
+end
+
+def display_table(player_hand, dealer_hand)
+  clear
+  puts "Dealer Cards: #{count_score(dealer_hand)}"
+  display_cards(dealer_hand)
+  puts "Player Cards : #{count_score(player_hand)}"
+  display_cards(player_hand)
+end
+
+def clear
+  system 'clear'
+end
+
+def count_aces(cards)
+  aces = cards.map do |suit,  rank|
+    rank
+  end.count('A')
+end
+
+def count_score(cards)
+  score =  rank_tally(cards)
+  aces = count_aces(cards)
+  loop do
+    if score > 21 && aces > 0
+      score -= 10
+      aces -= 1
+    else
+      break score
+    end
+  end
+  score
+end
+
+def rank_tally(cards)
+  cards.map do |suit, rank|
+    if rank.class == String
+      case rank
+      when 'A' then 11
+      when ' ' then 0
+      else
+        10
+      end
+    else
+      rank
+    end
+  end.sum
+end
+
+def bust?(cards)
+  count_score(cards) > 21
+end
+
+def display_busted(player_hand, dealer_hand)
+  if bust?(player_hand)
+    puts "YOU BUST!!!"
+  elsif bust?(dealer_hand)
+    puts "DEALER BUSTS!!!"
+  end
+end
+
+def display_winner(player_hand, dealer_hand)
+  player = count_score(player_hand)
+  dealer = count_score(dealer_hand)
+  if player < dealer && dealer
+    puts "Dealer Wins..."
+  elsif player > dealer && player
+    puts "You Winsdeded!!!"
+  else
+    puts "No Winner"
+  end
+end
+
 # Main Program
-# deck = create_deck.shuffle!
+def main
+  loop do
+    deck = create_deck.shuffle
+    player_hand = []
+    dealer_hand = []
+
+    2.times do   # deal out cards
+      player_hand << deal_card!(deck)
+      dealer_hand << deal_card!(deck)
+    end
+
+    display_table(player_hand, [dealer_hand[0], ['?', ' ']])
+
+    # player turn
+    until player_hand.last == nil
+      player_hand << player_turn(deck)
+      unless player_hand.last == nil
+        display_table(player_hand, [dealer_hand[0], ['?', ' ']])
+      end
+      break if player_hand.last == nil || bust?(player_hand)
+    end
+    player_hand.pop if player_hand.last == nil
+
+    display_table(player_hand, dealer_hand)
+    # p "Player Score: #{count_score(player_hand)}"
+
+    # Dealer turn
+    while count_score(dealer_hand) < 17 && !bust?(player_hand)
+      dealer_hand << deal_card!(deck)
+      display_table(player_hand, dealer_hand)
+      sleep(1)
+    end    
+
+    display_table(player_hand, dealer_hand)
+    display_busted(player_hand, dealer_hand)
+
+    if bust?(player_hand)
+      puts "Dealer Wins..."
+    elsif bust?(dealer_hand)
+      puts "You Win!!!"
+    else
+      display_winner(player_hand, dealer_hand)
+    end
+
+    puts "Play Again? y/n"
+    again = gets.chomp.downcase
+    break unless again.start_with?('y')
+  end
+end
+
+main
+
+
+
+
 # Deal cards to player
 # deal to dealer
 # loop
@@ -99,6 +227,4 @@ puts player_cards.transpose.map {|card| card.join('  ') }
 # check winner
 # play again?
 
-
-p deck
 
