@@ -91,12 +91,12 @@ def display_table(player_hand, dealer_hand)
   clear
   puts "Dealer Cards: #{count_score(dealer_hand)}"
   display_cards(dealer_hand)
-  puts "Player Cards : #{count_score(player_hand)}"
+  puts "Player Cards: #{count_score(player_hand)}"
   display_cards(player_hand)
 end
 
 def clear
-  system 'clear'
+  system('clear')  || system('cls')
 end
 
 def count_aces(cards)
