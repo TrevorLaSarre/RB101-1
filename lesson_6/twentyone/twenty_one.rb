@@ -1,45 +1,17 @@
-=begin
-1. Initialize deck
-        create deck of cards
-        shuffle the deck
-2. Deal cards to player and dealer
-        deal out cards to player and computer (removing from the deck)
-3. Player turn: hit or stay
-        player turn (hit, stay)
-4. If player bust, dealer wins
-5. Dealer turn: hit or stay
-  - repeat until total >= 17
-        dealer(computer) decides
-6. If dealer bust, player wins.
-7. Compare cards and Declare Winner
-
-
-take turns
-  dealer(computer) decides
-  player turn (hit, stay)
-determing winners - 21 or highest without going over 21
-  assign values to cards and add up
-      all face cards are 10
-      all numbered cards are their value
-      ace can be 1 or 11 based on the current score
-        1 if 11 would cause player or dealer to bust
-        this also includes the case for multiple aces in a hand (an ace by ace basis) baduhn
-
-dealer rules
-  + if the cards are less than 17 the dealer must hit (unless the player has already busted)
-  +  
-=end
 CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
+GOAL_VALUE = 21
+DEALER_MIN = 17
 
 SUITS = ['♥', '♣', '♦', '♠']
 
-DECK_MAKEUP = {
-                SUITS[0] => CARDS.dup,
+DECK_MAKEUP = { SUITS[0] => CARDS.dup,
                 SUITS[1] => CARDS.dup,
                 SUITS[2] => CARDS.dup,
-                SUITS[3] => CARDS.dup
-}
+                SUITS[3] => CARDS.dup }
 
+def prompt(message)
+  puts "=> #{message}"
+end
 
 def create_deck
   deck = []
@@ -50,18 +22,20 @@ def create_deck
   end
   deck
 end
- 
-def card_image(card)
+
+# rubocop:disable Metrics/AbcSize
+def card_image(card, spacing) # dynamic card spacer
   cards = []
-  cards << "+---------+" 
-  cards << "|".ljust(8) + "#{card[1]}".ljust(2) + "|"
-  cards << "|         |"
-  cards << "|".ljust(5)  +  "#{card[0]}" +     "|".rjust(5)
-  cards << "|         |"
-  cards << "|" + "#{card[1]}".rjust(2)  + "|".rjust(8)
-  cards << "+---------+"
+  cards << "+" + ("-" * spacing[1]) + "+"
+  cards << "|".ljust(spacing[0]) + card[1].to_s.ljust(2) + "|"
+  cards << "|" + (" " * spacing[1]) + "|"
+  cards << "|".ljust(spacing[2]) + card[0] + "|".rjust(spacing[2])
+  cards << "|" + (" " * spacing[1]) + "|"
+  cards << "|" + card[1].to_s.rjust(2) + "|".rjust(spacing[0])
+  cards << "+" + ("-" * spacing[1]) + "+"
   cards
 end
+# rubocop:enable Metrics/AbcSize
 
 def deal_card!(deck)
   deck.pop
@@ -69,47 +43,66 @@ end
 
 def player_turn(deck)
   loop do
-    puts "What would you like to do? (hit or stay)"
+    prompt "What would you like to do? (hit or stay)"
     move = gets.chomp
     if move.downcase == 'h' || move.downcase == 'hit'
       break deal_card!(deck)
     elsif move.downcase == 's' || move.downcase == 'stay'
       break nil
     end
-      puts "Not a valid move!"
+    prompt "Not a valid move!"
+  end
+end
+
+def dynamic_spacing(cards, spacing)
+  if cards.size > 5
+    difference = cards.size - 5
+    difference += 1 unless difference.even?
+    spacing.map!.with_index do |num, idx|
+      if idx != 2
+        num - difference
+      else
+        num - (difference / 2)
+      end
+    end
+  else
+    spacing
   end
 end
 
 def display_cards(cards)
+  default_spacing = [8, 9, 5]
+  spacing = dynamic_spacing(cards, default_spacing)
+
   table = cards.map do |card|
-            card_image(card)
-          end
-  puts table.transpose.map { |sections| sections.join('  ') }
+    card_image(card, spacing)
+  end
+  puts(table.transpose.map { |sections| sections.join(' ') })
 end
 
 def display_table(player_hand, dealer_hand)
   clear
-  puts "Dealer Cards: #{count_score(dealer_hand)}"
+  prompt "Dealer Cards: #{count_score(dealer_hand)}"
   display_cards(dealer_hand)
-  puts "Player Cards: #{count_score(player_hand)}"
+  prompt "Player Cards: #{count_score(player_hand)}"
   display_cards(player_hand)
 end
 
 def clear
-  system('clear')  || system('cls')
+  system('clear') || system('cls')
 end
 
 def count_aces(cards)
-  aces = cards.map do |suit,  rank|
+  cards.map do |_suit, rank|
     rank
   end.count('A')
 end
 
 def count_score(cards)
-  score =  rank_tally(cards)
+  score = score_total(cards)
   aces = count_aces(cards)
   loop do
-    if score > 21 && aces > 0
+    if score > GOAL_VALUE && aces > 0
       score -= 10
       aces -= 1
     else
@@ -119,8 +112,8 @@ def count_score(cards)
   score
 end
 
-def rank_tally(cards)
-  cards.map do |suit, rank|
+def score_total(cards)
+  cards.map do |_suit, rank|
     if rank.class == String
       case rank
       when 'A' then 11
@@ -135,14 +128,14 @@ def rank_tally(cards)
 end
 
 def bust?(cards)
-  count_score(cards) > 21
+  count_score(cards) > GOAL_VALUE
 end
 
 def display_busted(player_hand, dealer_hand)
   if bust?(player_hand)
-    puts "YOU BUST!!!"
+    prompt "YOU BUST!!!"
   elsif bust?(dealer_hand)
-    puts "DEALER BUSTS!!!"
+    prompt "DEALER BUSTS!!!"
   end
 end
 
@@ -150,22 +143,26 @@ def display_winner(player_hand, dealer_hand)
   player = count_score(player_hand)
   dealer = count_score(dealer_hand)
   if player < dealer && dealer
-    puts "Dealer Wins..."
+    prompt "Dealer Wins..."
   elsif player > dealer && player
-    puts "You Winsdeded!!!"
+    prompt "You Winsdeded!!!"
   else
-    puts "No Winner"
+    prompt "No Winner"
   end
 end
 
-# Main Program
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/CyclomaticComplexity
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/PerceivedComplexity
 def main
+  score = { Player: 0, Dealer: 0, Ties: 0}
   loop do
     deck = create_deck.shuffle
     player_hand = []
     dealer_hand = []
 
-    2.times do   # deal out cards
+    2.times do # deal out cards
       player_hand << deal_card!(deck)
       dealer_hand << deal_card!(deck)
     end
@@ -173,58 +170,48 @@ def main
     display_table(player_hand, [dealer_hand[0], ['?', ' ']])
 
     # player turn
-    until player_hand.last == nil
+    until player_hand.last.nil?
       player_hand << player_turn(deck)
-      unless player_hand.last == nil
+      unless player_hand.last.nil?
         display_table(player_hand, [dealer_hand[0], ['?', ' ']])
       end
-      break if player_hand.last == nil || bust?(player_hand)
+      break if player_hand.last.nil? || bust?(player_hand)
     end
-    player_hand.pop if player_hand.last == nil
+    player_hand.pop if player_hand.last.nil?
 
     display_table(player_hand, dealer_hand)
-    # p "Player Score: #{count_score(player_hand)}"
 
     # Dealer turn
-    while count_score(dealer_hand) < 17 && !bust?(player_hand)
+    while count_score(dealer_hand) < DEALER_MIN && !bust?(player_hand)
+      sleep(1)
       dealer_hand << deal_card!(deck)
       display_table(player_hand, dealer_hand)
-      sleep(1)
-    end    
+    end
 
     display_table(player_hand, dealer_hand)
     display_busted(player_hand, dealer_hand)
 
     if bust?(player_hand)
-      puts "Dealer Wins..."
+      prompt "Dealer Wins..."
     elsif bust?(dealer_hand)
-      puts "You Win!!!"
+      prompt "You Win!!!"
     else
       display_winner(player_hand, dealer_hand)
     end
-
-    puts "Play Again? y/n"
+    prompt "Play Again? y/n"
     again = gets.chomp.downcase
     break unless again.start_with?('y')
   end
+  prompt "Thanks for playing"
 end
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/CyclomaticComplexity
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/PerceivedComplexity
 
 main
 
-
-
-
-# Deal cards to player
-# deal to dealer
-# loop
-#   Player turn
-#   check bust
-# end
-# loop
-#   dealer turn
-#   check win/bust
-# end
-# check winner
-# play again?
-
-
+# If interested, check out my dynamic card size display for multiple cards (works up to 11)
+# deck = create_deck
+# display_cards(deck[0...5])
+# display_cards(deck[0...11])
